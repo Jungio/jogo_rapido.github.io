@@ -5,6 +5,21 @@
       <h1>Bem-vindo, {{ user.first_name }}!</h1>
       <p>Email: {{ user.email }}</p>
 
+      <h2>Editar Informações</h2> 
+      <form method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Salvar Alterações</button>
+      </form>
+   
+      {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+              <li>{{ message }}</li>
+          {% endfor %}
+      </ul>
+  {% endif %}
+
       <h2>Meus Favoritos</h2>
       <div class="favoritos">
           {% for quadra in favoritos %}

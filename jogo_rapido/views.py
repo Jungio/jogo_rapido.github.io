@@ -3,12 +3,12 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .models import QuadraGeral, Item, Comentario
-from .forms import NovoUsuarioForm,ComentarioForm
+from .forms import NovoUsuarioForm,ComentarioForm,UserEditForm
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-
+from django.contrib import messages
 
 
 
@@ -140,6 +140,21 @@ def perfil(request):
     favoritos = user.quadra_set.all() 
     return render(request, 'perfil.html', {'favoritos': favoritos})
 
+
+@login_required
+def editar_perfil(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Informações atualizadas com sucesso!')  
+            return redirect('perfil')  
+    else:
+        form = UserEditForm(instance=user)
+
+    return render(request, 'perfil.html', {'form': form})
+
 @login_required
 def pagina_reserva(request, quadra_id):
     # Recupera o horário selecionado da sessão
@@ -161,4 +176,5 @@ from django.shortcuts import render
 def finalizar_reserva(request):
     # Processamento para finalizar a reserva (salvar no banco, etc.)
     return render(request, 'reserva_confirmada.html')
+
 
